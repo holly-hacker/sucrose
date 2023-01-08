@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-dialoguer = { version = "0.10.2", default-features = false }
+dialoguer = { version = "0.10.2", default-features = false, features = ["fuzzy-select"] }
 indicatif = "0.17.2"
 minreq = { version = "2.6.0", features = ["https-native"] }
 scraper = { version = "0.14.0", default-features = false, features = ["deterministic"] }

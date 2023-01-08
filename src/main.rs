@@ -1,11 +1,14 @@
+mod twine;
+
 use std::time::Duration;
 
-use dialoguer::{theme::ColorfulTheme, Input, Select};
+use dialoguer::{theme::ColorfulTheme, FuzzySelect, Input, Select};
 use indicatif::ProgressBar;
 use scraper::{Html, Selector};
 use syntect::{
     easy::HighlightLines, highlighting::ThemeSet, parsing::SyntaxSet, util::LinesWithEndings,
 };
+use twine::Story;
 
 fn main() {
     let selection = &["Select game", "Download game", "Exit"];
@@ -81,7 +84,7 @@ fn game_menu(data: &str) {
     let doc = Html::parse_document(data);
 
     loop {
-        let options = ["View Script", "View Style", "Back"];
+        let options = ["View Script", "View Style", "View Passage", "Back"];
 
         let game_index = Select::with_theme(&ColorfulTheme::default())
             .with_prompt("Select option")
@@ -132,6 +135,17 @@ fn game_menu(data: &str) {
                 let inner = found_style.text().collect::<String>();
 
                 print_highlighted(&inner, "css");
+            }
+            2 => {
+                let story = Story::from_html(&doc);
+                let passage_index = FuzzySelect::with_theme(&ColorfulTheme::default())
+                    .items(&story.passages.iter().map(|x| &x.name).collect::<Vec<_>>())
+                    .default(0)
+                    .interact()
+                    .unwrap();
+
+                let passage = &story.passages[passage_index];
+                eprintln!("{}", passage.content);
             }
             _ => return,
         }
