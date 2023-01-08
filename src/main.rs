@@ -56,7 +56,6 @@ fn main() {
             }
             _ => return,
         }
-        eprintln!();
     }
 }
 
@@ -84,7 +83,13 @@ fn game_menu(data: &str) {
     let doc = Html::parse_document(data);
 
     loop {
-        let options = ["View Script", "View Style", "View Passage", "Back"];
+        let options = [
+            "View Script",
+            "View Style",
+            "View Passage",
+            "Extract links in img tags",
+            "Back",
+        ];
 
         let game_index = Select::with_theme(&ColorfulTheme::default())
             .with_prompt("Select option")
@@ -146,6 +151,32 @@ fn game_menu(data: &str) {
 
                 let passage = &story.passages[passage_index];
                 eprintln!("{}", passage.content);
+            }
+            3 => {
+                let a_selector = Selector::parse("img").unwrap();
+                let story = Story::from_html(&doc);
+                let mut links = story
+                    .passages
+                    .iter()
+                    .map(|p| &p.content)
+                    .flat_map(|c| {
+                        let fragment = Html::parse_fragment(c);
+                        fragment
+                            .select(&a_selector)
+                            .flat_map(|tag| tag.value().attr("src"))
+                            .map(|link| link.to_string())
+                            .collect::<Vec<_>>()
+                    })
+                    .collect::<Vec<_>>();
+
+                links.sort();
+                links.dedup();
+
+                eprintln!("Found {} unique links", links.len());
+
+                for link in links {
+                    println!("{link}");
+                }
             }
             _ => return,
         }
