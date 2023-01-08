@@ -10,4 +10,4 @@ dialoguer = { version = "0.10.2", default-features = false }
 indicatif = "0.17.2"
 minreq = { version = "2.6.0", features = ["https-native"] }
 scraper = { version = "0.14.0", default-features = false, features = ["deterministic"] }
-syntect = { version = "5.0.0", default-features = false, features = ["default-syntaxes", "default-themes", "default-fancy"] }
+syntect = { version = "5.0.0", default-features = false, features = ["default-syntaxes", "default-themes", "default-onig"] }
